@@ -11,6 +11,7 @@ RUN git clone https://github.com/AlexeyAB/darknet.git && \
     cd darknet && \
     sed -i 's/GPU=0/GPU=1/' Makefile && \
     sed -i 's/CUDNN=0/CUDNN=1/' Makefile && \
+	sed -i 's/LIBSO=0/LIBSO=1/' Makefile && \
     make
 
 COPY yolo/detect.sh /opt/darknet/detect.sh
@@ -25,7 +26,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
-COPY --from=builder /opt/darknet/libdarknet.so /usr/local/lib/
 
 WORKDIR /app
 COPY app/requirements.txt .
