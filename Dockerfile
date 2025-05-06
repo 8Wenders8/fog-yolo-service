@@ -5,17 +5,17 @@ RUN apt-get update && \
       git build-essential wget && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone --depth 1 --branch yolov4 https://github.com/AlexeyAB/darknet.git /opt/darknet
-
 WORKDIR /opt/darknet
 
-RUN sed -i 's/GPU=0/GPU=1/' Makefile \
- && sed -i 's/CUDNN=0/CUDNN=1/' Makefile \
- && sed -i 's/LIBSO=0/LIBSO=1/' Makefile \
- && make
+RUN git clone --depth 1 --branch yolov4 https://github.com/AlexeyAB/darknet.git . && \
+    sed -i 's/GPU=0/GPU=1/' Makefile && \
+    sed -i 's/CUDNN=0/CUDNN=1/' Makefile && \
+    sed -i 's/LIBSO=0/LIBSO=1/' Makefile && \
+    make
+
 
 RUN wget -O /opt/darknet/yolov4.weights \
-     https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights  :contentReference[oaicite:0]{index=0}
+     https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
 
 COPY yolo/detect.sh /opt/darknet/detect.sh
 RUN chmod +x /opt/darknet/detect.sh
