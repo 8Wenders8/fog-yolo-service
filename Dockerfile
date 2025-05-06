@@ -2,7 +2,7 @@ FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04 AS builder
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      git build-essential && \
+      git build-essential wget && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt
@@ -29,7 +29,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
-COPY --from=builder /opt/darknet/cfg /opt/darkent/cfg
+COPY --from=builder /opt/darknet/cfg /opt/darknet/cfg
 COPY --from=builder /opt/darknet/detect.sh /opt/darknet/detect.sh
 
 WORKDIR /app
