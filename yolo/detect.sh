@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-cd /opt/darknet
+cd /opt/darknet || exit 1
 
-if command -v nvidia-smi &>/dev/null && nvidia-smi ...; then
-  echo "[entrypoint] GPU found"
-  exec ./darknet detector test data/coco.data cfg/yolov3.cfg yolov3.weights \
-       "$@" -ext_output -dont_show
+DATA="data/coco.data"
+CFG="cfg/yolov3.cfg"
+WEIGHTS="yolov3.weights"
+
+if command -v nvidia-smi &>/dev/null && \
+   nvidia-smi --query-gpu=name --format=csv,noheader | grep . &>/dev/null; then
+  echo "[entrypoint] GPU found – running with CUDA…"
+  exec ./darknet detector test "$DATA" "$CFG" "$WEIGHTS" "$@" -ext_output -dont_show
 else
-  echo "[entrypoint] No GPU"
-  exec ./darknet detector test data/coco.data cfg/yolov3.cfg yolov3.weights \
-       -nogpu "$@" -ext_output -dont_show
+  echo "[entrypoint] No GPU – falling back to CPU."
+  exec ./darknet detector test "$DATA" "$CFG" "$WEIGHTS" -nogpu "$@" -ext_output -dont_show
 fi
-
