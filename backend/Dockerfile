@@ -17,7 +17,7 @@ RUN git clone --depth 1 --branch yolov4 https://github.com/AlexeyAB/darknet.git 
 RUN wget -O /opt/darknet/yolov4.weights \
      https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
 
-COPY yolo/detect.sh /opt/darknet/detect.sh
+COPY detect.sh /opt/darknet/detect.sh
 RUN chmod +x /opt/darknet/detect.sh
 
 
@@ -35,10 +35,10 @@ COPY --from=builder /opt/darknet /opt/darknet
 #RUN cp /opt/darknet/data/coco.names /opt/darknet/data/names.list
 
 WORKDIR /app
-COPY app/requirements.txt .
+COPY requirements.txt .
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
-COPY app/main.py .
-COPY app/static/ ./static/
+COPY main.py .
+#COPY app/static/ ./static/
 
 EXPOSE 8000
 CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:8000"]

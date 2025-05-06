@@ -2,14 +2,15 @@ import uuid, subprocess, base64, os
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.get("/", response_class=HTMLResponse)
-async def index():
-    with open("static/index.html", "r") as f:
-        return f.read()
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["*"],               
+  allow_methods=["POST", "GET"],
+  allow_headers=["*"],
+)
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
