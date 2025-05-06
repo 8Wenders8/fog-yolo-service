@@ -28,10 +28,7 @@ RUN apt-get update && \
       python3 python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
-COPY --from=builder /opt/darknet/darknet /opt/darknet/darknet
-COPY --from=builder /opt/darknet/cfg /opt/darknet/cfg
-COPY --from=builder /opt/darknet/detect.sh /opt/darknet/detect.sh
+COPY --from=builder /opt/darknet /opt/darknet
 
 WORKDIR /app
 COPY app/requirements.txt .
