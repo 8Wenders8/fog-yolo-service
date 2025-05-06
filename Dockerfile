@@ -29,6 +29,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
+COPY --from=builder /opt/darknet/darknet /opt/darknet/darknet
 COPY --from=builder /opt/darknet/cfg /opt/darknet/cfg
 COPY --from=builder /opt/darknet/detect.sh /opt/darknet/detect.sh
 
