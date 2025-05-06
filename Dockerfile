@@ -29,6 +29,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/darknet /opt/darknet
+RUN cp /opt/darknet/data/coco.names /opt/darknet/data/names.list
 
 WORKDIR /app
 COPY app/requirements.txt .
