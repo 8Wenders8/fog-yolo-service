@@ -16,12 +16,22 @@ RUN git clone https://github.com/AlexeyAB/darknet.git && \
 COPY yolo/detect.sh /opt/darknet/detect.sh
 RUN chmod +x /opt/darknet/detect.sh
 
+
+FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu20.04
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      python3 python3-pip && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
+COPY --from=builder /opt/darknet/libdarknet.so /usr/local/lib/
+
 WORKDIR /app
 COPY app/requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --no-cache-dir -r requirements.txt
 COPY app/main.py .
-COPY app/static/ .
-
+COPY app/static/ ./static/
 
 EXPOSE 8000
 CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:8000"]
