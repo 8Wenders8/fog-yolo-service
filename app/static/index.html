@@ -20,6 +20,11 @@
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const res = await fetch('/upload', { method: 'POST', body: new FormData(form) });
+	if (!res.ok) {
+		const text = await res.text();
+		alert('Server error:\n' + text);
+		return;
+	}
     const json = await res.json();
     if (json.image_data) {
       document.getElementById('out-img').src = json.image_data;

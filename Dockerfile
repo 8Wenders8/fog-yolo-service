@@ -26,6 +26,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
+COPY --from=builder /opt/darknet/cfg /opt/darkent/cfg
+COPY --from=builder /opt/darknet/yolov3.weights /opt/darknet/yolov3.weights
 
 WORKDIR /app
 COPY app/requirements.txt .
