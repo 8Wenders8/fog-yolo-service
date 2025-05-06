@@ -16,22 +16,36 @@
   </div>
 
   <script>
-  const form = document.getElementById('upload-form');
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const res = await fetch('/upload', { method: 'POST', body: new FormData(form) });
-	if (!res.ok) {
+	  const form = document.getElementById('upload-form');
+	  form.addEventListener('submit', async e => {
+		e.preventDefault();
+		const res = await fetch('/upload', { method: 'POST', body: new FormData(form) });
+
+		if (!res.ok) {
+			const text = await res.text();
+			alert('Server error:\n' + text);
+			return;
+		}
+
 		const text = await res.text();
-		alert('Server error:\n' + text);
-		return;
-	}
-    const json = await res.json();
-    if (json.image_data) {
-      document.getElementById('out-img').src = json.image_data;
-    } else {
-      alert('Error: ' + (json.error || 'unknown'));
-    }
-  });
+		console.log('RAW response text:', text);
+
+		let json;
+		try{
+			json = JSON.parse(text);
+		} catch(err){
+			console.error('Failed to parse JSON:', err);
+			return alert('Server returned invalid JSON.');
+		}
+
+		console.log('Parse JSON object:', json);
+
+		if (json.image_data) {
+		  document.getElementById('out-img').src = json.image_data;
+		} else {
+		  alert('No image_data key: ' + (json.error || 'unknown'));
+		}
+	  });
   </script>
 </body>
 </html>
