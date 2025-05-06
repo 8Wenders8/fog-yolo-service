@@ -14,6 +14,9 @@ RUN git clone https://github.com/AlexeyAB/darknet.git && \
 	sed -i 's/LIBSO=0/LIBSO=1/' Makefile && \
     make
 
+RUN wget -O /opt/darknet/yolov3.weights \
+      https://pjreddie.com/media/files/yolov3.weights
+
 COPY yolo/detect.sh /opt/darknet/detect.sh
 RUN chmod +x /opt/darknet/detect.sh
 
@@ -26,9 +29,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
-COPY --from=builder /opt/darknet /opt/darknet
 COPY --from=builder /opt/darknet/cfg /opt/darkent/cfg
-COPY --from=builder /opt/darknet/yolov3.weights /opt/darknet/yolov3.weights
+COPY --from=builder /opt/darknet/detect.sh /opt/darknet/detect.sh
 
 WORKDIR /app
 COPY app/requirements.txt .
