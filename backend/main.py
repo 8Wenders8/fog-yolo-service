@@ -12,7 +12,7 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-@app.post("/upload")
+@app.post("/api/upload")
 async def upload(file: UploadFile = File(...)):
     in_path = f"/tmp/{uuid.uuid4().hex}_{file.filename}"
     out_path = f"/tmp/{uuid.uuid4().hex}_out_{file.filename}"
