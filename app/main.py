@@ -19,8 +19,7 @@ async def upload(file: UploadFile = File(...)):
     with open(in_path, "wb") as f:
         f.write(content)
 
-    cmd = ["./detect.sh", "detect", "cfg/yolov3.cfg", "yolov3.weights",
-           "-ext_output", in_path, out_path]
+    cmd = ["./detect.sh", in_path, out_path]
     proc = subprocess.run(cmd, cwd="/opt/darknet", capture_output=True)
     if proc.returncode != 0:
         return JSONResponse({"error": proc.stderr.decode()}, status_code=500)
