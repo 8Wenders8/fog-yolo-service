@@ -1,12 +1,14 @@
-FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04 AS builder
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
       git build-essential && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/pjreddie/darknet.git /opt/darknet && \
-    cd /opt/darknet && \
+WORKDIR /opt
+
+RUN git clone https://github.com/AlexeyAB/darknet.git && \
+    cd darknet && \
     sed -i 's/GPU=0/GPU=1/' Makefile && \
     sed -i 's/CUDNN=0/CUDNN=1/' Makefile && \
     make
