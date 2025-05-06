@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 cd /opt/darknet || exit 1
 
-DATA="data/coco.data"
+DATA="cfg/coco.data"
 CFG="cfg/yolov3.cfg"
 WEIGHTS="yolov3.weights"
 
