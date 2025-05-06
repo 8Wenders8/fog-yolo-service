@@ -23,30 +23,36 @@
   </div>
 
   <script>
-  const form = document.getElementById('upload-form');
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const resultDiv = document.getElementById('result');
-    resultDiv.classList.add('hidden');
+	  const form = document.getElementById('upload-form');
+	  form.addEventListener('submit', async e => {
+		e.preventDefault();
+		const resultDiv = document.getElementById('result');
+		resultDiv.classList.add('hidden');
 
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      body: new FormData(form)
-    });
+		const res = await fetch('/api/upload', {
+		  method: 'POST',
+		  body: new FormData(form)
+		});
 
-    let json;
-    try { json = JSON.parse(text); }
-    catch (err) {
-      return alert('Server error:\n' + text);
-    }
+		if(!res.ok){
+			const err = await res.text();
+			return alert('Server error:\n' + err);
+		}
 
-    if (json.image_data) {
-      document.getElementById('out-img').src = json.image_data;
-      resultDiv.classList.remove('hidden');
-    } else {
-      alert('Error: ' + JSON.stringify(json));
-    }
-  });
+		let json;
+		try {
+			json = await res.json();
+		} catch (err) {
+		  return alert('Invalid JSON response from server.\n');
+		}
+
+		if (json.image_data) {
+		  document.getElementById('out-img').src = json.image_data;
+		  resultDiv.classList.remove('hidden');
+		} else {
+		  alert('Error: ' + JSON.stringify(json));
+		}
+	  });
   </script>
 </body>
 </html>
