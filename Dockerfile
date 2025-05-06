@@ -5,17 +5,17 @@ RUN apt-get update && \
       git build-essential wget && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /opt
+RUN git clone --depth 1 --branch yolov4 https://github.com/AlexeyAB/darknet.git /opt/darknet
 
-RUN git clone https://github.com/AlexeyAB/darknet.git && \
-    cd darknet && \
-    sed -i 's/GPU=0/GPU=1/' Makefile && \
-    sed -i 's/CUDNN=0/CUDNN=1/' Makefile && \
-	sed -i 's/LIBSO=0/LIBSO=1/' Makefile && \
-    make
+WORKDIR /opt/darknet
 
-RUN wget -O /opt/darknet/yolov3.weights \
-      https://pjreddie.com/media/files/yolov3.weights
+RUN sed -i 's/GPU=0/GPU=1/' Makefile \
+ && sed -i 's/CUDNN=0/CUDNN=1/' Makefile \
+ && sed -i 's/LIBSO=0/LIBSO=1/' Makefile \
+ && make
+
+RUN wget -O /opt/darknet/yolov4.weights \
+     https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights  :contentReference[oaicite:0]{index=0}
 
 COPY yolo/detect.sh /opt/darknet/detect.sh
 RUN chmod +x /opt/darknet/detect.sh
@@ -29,9 +29,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/darknet /opt/darknet
-COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
-COPY --from=builder /opt/darknet/libdarknet.so /usr/local/lib/
-RUN ldconfig
+#COPY --from=builder /opt/darknet/darknet /usr/local/bin/darknet
+#COPY --from=builder /opt/darknet/libdarknet.so /usr/local/lib/
+#RUN ldconfig
 #RUN cp /opt/darknet/data/coco.names /opt/darknet/data/names.list
 
 WORKDIR /app

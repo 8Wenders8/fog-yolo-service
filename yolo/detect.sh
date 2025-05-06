@@ -9,13 +9,13 @@ cd /opt/darknet || exit 1
 
 # model files
 DATA="cfg/coco.data"
-CFG="cfg/yolov3.cfg"
-WEIGHTS="yolov3.weights"
+CFG="cfg/yolov4.cfg"
+WEIGHTS="yolov4.weights"
 
-# run inference
+# run on GPU if available, else CPU
 if command -v nvidia-smi &>/dev/null && \
    nvidia-smi --query-gpu=name --format=csv,noheader | grep . &>/dev/null; then
-  echo "[entrypoint] GPU found – running CUDA"
+  echo "[entrypoint] GPU detected – running YOLOv4 on CUDA"
   ./darknet detector test \
     "$DATA" "$CFG" "$WEIGHTS" \
     "$IN_IMG" \
@@ -28,10 +28,15 @@ else
     -nogpu -dont_show -ext_output > /dev/null
 fi
 
-if [ ! -f predictions.jpg ]; then
-  echo "ERROR: predictions.jpg not found!" >&2
+
+if [ -f predictions.jpg ]; then
+  SRC=predictions.jpg
+elif [ -f predictions.png ]; then
+  SRC=predictions.png
+else
+  echo "ERROR: no predictions.(jpg|png) found" >&2
   exit 1
 fi
 
-cp predictions.jpg "$OUT_IMG"
+cp "$SRC" "$OUT_IMG"
 
