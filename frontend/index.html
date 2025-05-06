@@ -47,12 +47,12 @@
       </button>
     </form>
 
-    <div v-if="imageData" class="mt-6">
+    <div v-if="imageData" class="mt-6 flex justify-center">
       <h2 class="text-xl font-semibold mb-2 text-center">Result</h2>
       <img
         :src="imageData"
         alt="Processed"
-        class="w-full rounded-lg border"
+        class="w-full rounded-lg border max-w-full max-h-[75vh] object-contain mx-auto"
       />
     </div>
   </div>
