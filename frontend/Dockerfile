@@ -1,8 +1,8 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm init -y \
+ && npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
 
 COPY tailwind.config.js postcss.config.js ./
 COPY src ./src
