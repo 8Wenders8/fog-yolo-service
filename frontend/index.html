@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-gray-100">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>YOLOv4 Demo</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
@@ -27,10 +28,20 @@
 
       <button
         type="submit"
-        class="w-full bg-blue-600 text-white py-2 rounded-lg
-               hover:bg-blue-700 transition"
+        :disabled="loading"
+        class="w-full flex items-center justify-center bg-blue-600 text-white py-2 rounded-lg
+               hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Run YOLO
+        <template v-if="loading">
+          <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z"></path>
+          </svg>
+          Running...
+        </template>
+        <template v-else>
+          Run YOLO
+        </template>
       </button>
     </form>
 
@@ -51,12 +62,18 @@
       setup() {
         const fileInput = ref(null);
         const imageData = ref(null);
+        const loading = ref(false);
 
         const submit = async () => {
-          imageData.value = null;  // clear previous
+          if (loading.value) return;
+          imageData.value = null;
+          loading.value = true;
 
           const file = fileInput.value.files[0];
-          if (!file) return;
+          if (!file) {
+            loading.value = false;
+            return;
+          }
 
           const form = new FormData();
           form.append('file', file);
@@ -68,10 +85,12 @@
               body: form
             });
           } catch (e) {
+            loading.value = false;
             return alert('Network error:\n' + e);
           }
 
           if (!res.ok) {
+            loading.value = false;
             const err = await res.text();
             return alert('Server error:\n' + err);
           }
@@ -80,6 +99,7 @@
           try {
             json = await res.json();
           } catch (e) {
+            loading.value = false;
             return alert('Invalid JSON response.');
           }
 
@@ -88,9 +108,10 @@
           } else {
             alert('Error: ' + JSON.stringify(json));
           }
+          loading.value = false;
         };
 
-        return { fileInput, imageData, submit };
+        return { fileInput, imageData, loading, submit };
       }
     }).mount('#app');
   </script>
