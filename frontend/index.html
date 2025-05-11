@@ -10,15 +10,15 @@
 </head>
 <body class="h-full flex items-center justify-center p-4">
   <div id="app" class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
-	<h1 class="text-2xl font-bold mb-4 text-center">YOLOv4 Inference</h1>
+	  <h1 class="text-2xl font-bold mb-4 text-center">YOLOv4 Inference</h1>
 
     <form @submit.prevent="submit" class="space-y-4">
       <input
         type="file"
         ref="fileInput"
-        accept="image/*"
+        accept=".png, .jpg, .jpeg"
         required
-		class="block w-full px-3 py-2            
+		    class="block w-full px-3 py-2            
               text-sm text-gray-500
               border border-gray-200 rounded-lg
               file:mr-4 file:py-2 file:px-4
@@ -65,6 +65,8 @@
         const fileInput = ref(null);
         const imageData = ref(null);
         const loading = ref(false);
+        
+        const ALLOWED_TYPES = ['image/png', 'image/jpeg'];
 
         const submit = async () => {
           if (loading.value) return;
@@ -75,6 +77,11 @@
           if (!file) {
             loading.value = false;
             return;
+          }
+          
+          if (!ALLOWED_TYPES.includes(file.type)) {
+            loading.value = false;
+            return alert(`Invalid file type: ${file.type}\nPlease upload a PNG or JPEG image.`);
           }
 
           const form = new FormData();
